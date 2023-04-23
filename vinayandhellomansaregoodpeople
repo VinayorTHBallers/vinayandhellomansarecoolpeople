@@ -1,0 +1,25 @@
+-- Define variables
+local player = game.Players.LocalPlayer
+local jumpCount = 0
+local canTripleJump = true
+
+-- Set the cooldown time in seconds
+local cooldownTime = 5
+
+-- Connect function to the UserInputService
+game:GetService("UserInputService").JumpRequest:Connect(function()
+    if jumpCount < 2 and canTripleJump then
+        player.Character.Humanoid.Jump = true
+        jumpCount = jumpCount + 1
+        canTripleJump = false
+        wait(cooldownTime)
+        canTripleJump = true
+    end
+end)
+
+-- Check for the end of a jump
+player.Character.Humanoid.StateChanged:Connect(function(old, new)
+    if new == Enum.HumanoidStateType.Freefall or new == Enum.HumanoidStateType.Landed then
+        jumpCount = 0
+    end
+end)
